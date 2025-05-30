@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Footer</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" />
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+
+      .page-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .content-wrap {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-container">
+      <!-- Main content area -->
+      <div class="content-wrap">
+        <!-- Your page content goes here -->
+      </div>
+
+      <!-- Sticky footer -->
+      <footer
+        th:fragment="footer"
+        class="bg-dark text-light page-footer font-small blue pt-4">
+        <div class="container text-center">
+          <p class="mb-0">Made with ❤️ for Library Lovers</p>
+          <p class="mb-1">
+            Connect with me on
+            <a
+              class="text-info"
+              target="_blank"
+              href="https://github.com/M-Saad-Sohail/">
+              <i class="fab fa-github"></i> GitHub
+            </a>
+          </p>
+          <p class="small mb-0">
+            © 2024 Library Management System. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
