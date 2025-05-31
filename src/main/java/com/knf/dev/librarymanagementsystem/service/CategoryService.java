@@ -8,6 +8,8 @@ public interface CategoryService {
 
 	public List<Category> findAllCategories();
 
+	List<Category> searchCategories(String keyword);
+
 	public Category findCategoryById(Long id);
 
 	public void createCategory(Category category);

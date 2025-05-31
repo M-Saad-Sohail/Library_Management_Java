@@ -3,6 +3,7 @@ package com.knf.dev.librarymanagementsystem.util;
 import com.knf.dev.librarymanagementsystem.entity.Book;
 import com.knf.dev.librarymanagementsystem.entity.Author;
 import com.knf.dev.librarymanagementsystem.entity.Publisher;
+import com.knf.dev.librarymanagementsystem.entity.Category;
 
 import java.util.List;
 
@@ -148,4 +149,52 @@ public class SortingAlgorithms {
             publishers.set(j + 1, key);
         }
     }
+
+    //
+    // ──────────────── CATEGORY SORTING ────────────────
+    //
+    /** Sort categories by name ascending (A → Z) using Bubble Sort. */
+    public static void bubbleSortCategoriesByNameAsc(List<Category> categories) {
+        int n = categories.size();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (categories.get(j).getName().compareToIgnoreCase(categories.get(j + 1).getName()) > 0) {
+                    Category temp = categories.get(j);
+                    categories.set(j, categories.get(j + 1));
+                    categories.set(j + 1, temp);
+                }
+            }
+        }
+    }
+
+    /** Sort categories by name descending (Z → A) using Selection Sort. */
+    public static void selectionSortCategoriesByNameDesc(List<Category> categories) {
+        int n = categories.size();
+        for (int i = 0; i < n - 1; i++) {
+            int maxIdx = i;
+            for (int j = i + 1; j < n; j++) {
+                if (categories.get(j).getName().compareToIgnoreCase(categories.get(maxIdx).getName()) > 0) {
+                    maxIdx = j;
+                }
+            }
+            Category temp = categories.get(i);
+            categories.set(i, categories.get(maxIdx));
+            categories.set(maxIdx, temp);
+        }
+    }
+
+    /** Sort categories by ID descending (highest → lowest) using Insertion Sort. */
+    public static void insertionSortCategoriesByIdDesc(List<Category> categories) {
+        int n = categories.size();
+        for (int i = 1; i < n; i++) {
+            Category key = categories.get(i);
+            int j = i - 1;
+            while (j >= 0 && categories.get(j).getId() < key.getId()) {
+                categories.set(j + 1, categories.get(j));
+                j--;
+            }
+            categories.set(j + 1, key);
+        }
+    }
+
 }

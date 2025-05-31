@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.knf.dev.librarymanagementsystem.entity.Category;
+import com.knf.dev.librarymanagementsystem.entity.Publisher;
 import com.knf.dev.librarymanagementsystem.exception.NotFoundException;
 import com.knf.dev.librarymanagementsystem.repository.CategoryRepository;
 import com.knf.dev.librarymanagementsystem.service.CategoryService;
@@ -31,6 +32,15 @@ public class CategoryServiceImpl implements CategoryService {
 	public Category findCategoryById(Long id) {
 		return categoryRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException(String.format("Category not found  with ID %d", id)));
+	}
+
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+	@Override
+	public List<Category> searchCategories(String keyword) {
+		if (keyword != null) {
+			return categoryRepository.search(keyword);
+		}
+		return categoryRepository.findAll();
 	}
 
 	@Override
