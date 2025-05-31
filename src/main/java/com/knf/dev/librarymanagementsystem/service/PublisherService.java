@@ -8,6 +8,8 @@ public interface PublisherService {
 
 	public List<Publisher> findAllPublishers();
 
+	public List<Publisher> searchPublishers(String keyword);
+
 	public Publisher findPublisherById(Long id);
 
 	public void createPublisher(Publisher publisher);

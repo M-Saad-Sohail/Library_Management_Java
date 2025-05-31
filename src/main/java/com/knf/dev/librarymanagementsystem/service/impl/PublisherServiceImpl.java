@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.knf.dev.librarymanagementsystem.entity.Book;
 import com.knf.dev.librarymanagementsystem.entity.Publisher;
 import com.knf.dev.librarymanagementsystem.exception.NotFoundException;
 import com.knf.dev.librarymanagementsystem.repository.PublisherRepository;
@@ -23,6 +24,15 @@ public class PublisherServiceImpl implements PublisherService {
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 	@Override
 	public List<Publisher> findAllPublishers() {
+		return publisherRepository.findAll();
+	}
+
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+	@Override
+	public List<Publisher> searchPublishers(String keyword) {
+		if (keyword != null) {
+			return publisherRepository.search(keyword);
+		}
 		return publisherRepository.findAll();
 	}
 

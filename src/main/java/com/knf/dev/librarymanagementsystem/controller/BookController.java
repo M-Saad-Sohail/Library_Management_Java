@@ -71,17 +71,16 @@ public class BookController {
 
 		// Apply sorting based on parameter
 		if ("bubble".equalsIgnoreCase(sort)) {
-			SortingAlgorithms.bubbleSortByTitle(books);
+			SortingAlgorithms.bubbleSortBooksByTitleAsc(books);
 		} else if ("selection".equalsIgnoreCase(sort)) {
-			SortingAlgorithms.selectionSortByTitle(books);
+			SortingAlgorithms.selectionSortBooksByTitleDesc(books);
 		} else if ("insertion".equalsIgnoreCase(sort)) {
-			SortingAlgorithms.insertionSortByIdDescending(books);
+			SortingAlgorithms.insertionSortBooksByIdDesc(books);
 		}
 
 		model.addAttribute("books", books);
 		return "list-books"; // your Thymeleaf page name
 	}
-
 
 	@RequestMapping("/book/{id}")
 	public String findBookById(@PathVariable("id") Long id, Model model) {

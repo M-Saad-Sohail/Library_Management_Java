@@ -11,6 +11,8 @@ public interface AuthorService {
 
 	public List<Author> findAllAuthors();
 
+	public List<Author> searchAuthors(String keyword);
+
 	public Author findAuthorById(Long id);
 
 	public void createAuthor(Author author);

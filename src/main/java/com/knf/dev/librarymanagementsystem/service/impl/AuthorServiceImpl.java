@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.knf.dev.librarymanagementsystem.entity.Author;
+import com.knf.dev.librarymanagementsystem.entity.Book;
 import com.knf.dev.librarymanagementsystem.exception.NotFoundException;
 import com.knf.dev.librarymanagementsystem.repository.AuthorRepository;
 import com.knf.dev.librarymanagementsystem.service.AuthorService;
@@ -36,6 +37,15 @@ public class AuthorServiceImpl implements AuthorService {
 	public Author findAuthorById(Long id) {
 		return authorRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException(String.format("Author not found with ID %d", id)));
+	}
+
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+	@Override
+	public List<Author> searchAuthors(String keyword) {
+		if (keyword != null) {
+			return authorRepository.search(keyword);
+		}
+		return authorRepository.findAll();
 	}
 
 	@Override
