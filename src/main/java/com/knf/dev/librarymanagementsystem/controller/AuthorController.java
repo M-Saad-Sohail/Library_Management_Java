@@ -29,19 +29,45 @@ public class AuthorController {
     }
 
     /**
-     * 1) List all authors (paginated) at “/authors” (or “/”)
-     *    • Optional query params: “page” and “size”
+     * List all authors at "/authors".
+     * If "sort" parameter is present, do an in‐memory sort (no pagination).
+     * Otherwise, use paginated results (page + size).
+     *
+     * Examples:
+     * GET /authors → paginated list (default)
+     * GET /authors?sort=bubble → in-memory sort (A→Z), no pagination
+     * GET /authors?sort=selection → in-memory sort (Z→A), no pagination
+     * GET /authors?sort=insertion → in-memory sort (ID desc), no pagination
+     * GET /authors?page=2&size=10 → paginated page 2, 10 items/page
      */
-    @RequestMapping({ "/authors", "/" })
+    @RequestMapping("/authors")
     public String findAllAuthors(
             Model model,
-            @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size) {
+            @RequestParam(value = "sort", required = false) String sort,
+            @RequestParam(value = "page", required = false) Optional<Integer> page,
+            @RequestParam(value = "size", required = false) Optional<Integer> size) {
 
+        // If "sort" is provided, perform an in-memory sort (no pagination)
+        if (sort != null && !sort.isBlank()) {
+            List<Author> allAuthors = authorService.findAllAuthors();
+
+            if ("bubble".equalsIgnoreCase(sort)) {
+                SortingAlgorithms.bubbleSortAuthorsByNameAsc(allAuthors);
+            } else if ("selection".equalsIgnoreCase(sort)) {
+                SortingAlgorithms.selectionSortAuthorsByNameDesc(allAuthors);
+            } else if ("insertion".equalsIgnoreCase(sort)) {
+                SortingAlgorithms.insertionSortAuthorsByIdDesc(allAuthors);
+            }
+
+            model.addAttribute("authors", allAuthors);
+            model.addAttribute("currentSort", sort);
+            return "list-authors";
+        }
+
+        // Otherwise, show paginated results
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(5);
 
-        // Use the service’s pagination method
         var authorPage = authorService.findPaginated(PageRequest.of(currentPage - 1, pageSize));
         model.addAttribute("authors", authorPage);
 
@@ -58,13 +84,10 @@ public class AuthorController {
     }
 
     /**
-     * 2) Search authors by keyword at “/searchAuthor”
-     *    • Looks for “keyword” in name or description (case‐insensitive).
+     * Search authors by keyword at "/searchAuthor"
      */
     @RequestMapping("/searchAuthor")
     public String searchAuthor(@Param("keyword") String keyword, Model model) {
-        // This requires a method in AuthorService:
-        //   public List<Author> searchAuthors(String keyword)
         List<Author> matchingAuthors = authorService.searchAuthors(keyword);
 
         model.addAttribute("authors", matchingAuthors);
@@ -73,28 +96,7 @@ public class AuthorController {
     }
 
     /**
-     * 3) Sort authors in‐memory (no pagination) at “/authors?sort=…”
-     *    • Uses the same “bubble”, “selection”, “insertion” params as your BookController.
-     *    • Returns a List<Author> (unsliced), binding directly to “authors”.
-     */
-    @GetMapping("/authors")
-    public String viewAuthors(@RequestParam(required = false) String sort, Model model) {
-        List<Author> authors = authorService.findAllAuthors();
-
-        if ("bubble".equalsIgnoreCase(sort)) {
-            SortingAlgorithms.bubbleSortAuthorsByNameAsc(authors);
-        } else if ("selection".equalsIgnoreCase(sort)) {
-            SortingAlgorithms.selectionSortAuthorsByNameDesc(authors);
-        } else if ("insertion".equalsIgnoreCase(sort)) {
-            SortingAlgorithms.insertionSortAuthorsByIdDesc(authors);
-        }
-
-        model.addAttribute("authors", authors);
-        return "list-authors";
-    }
-
-    /**
-     * 4) View a single author by ID
+     * View a single author by ID
      */
     @RequestMapping("/author/{id}")
     public String findAuthorById(@PathVariable("id") Long id, Model model) {
@@ -103,7 +105,7 @@ public class AuthorController {
     }
 
     /**
-     * 5) Show “Add Author” form
+     * Show “Add Author” form
      */
     @GetMapping("/addAuthor")
     public String showCreateForm(Author author) {
@@ -111,7 +113,7 @@ public class AuthorController {
     }
 
     /**
-     * 6) Handle form submission for creating a new author
+     * Handle form submission for creating a new author
      */
     @RequestMapping("/add-author")
     public String createAuthor(Author author, BindingResult result, Model model) {
@@ -123,7 +125,7 @@ public class AuthorController {
     }
 
     /**
-     * 7) Show “Update Author” form
+     * Show “Update Author” form
      */
     @GetMapping("/updateAuthor/{id}")
     public String showUpdateForm(@PathVariable("id") Long id, Model model) {
@@ -132,7 +134,7 @@ public class AuthorController {
     }
 
     /**
-     * 8) Handle form submission for updating an existing author
+     * Handle form submission for updating an existing author
      */
     @RequestMapping("/update-author/{id}")
     public String updateAuthor(
@@ -149,7 +151,7 @@ public class AuthorController {
     }
 
     /**
-     * 9) Delete an author
+     * Delete an author
      */
     @RequestMapping("/remove-author/{id}")
     public String deleteAuthor(@PathVariable("id") Long id, Model model) {
