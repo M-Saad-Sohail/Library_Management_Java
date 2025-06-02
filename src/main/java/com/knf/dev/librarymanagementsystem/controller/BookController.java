@@ -116,7 +116,7 @@ public class BookController {
 	public String showRecentlyViewedBooks(@ModelAttribute("recentlyViewed") Stack<Book> recentlyViewed,
 			Model model) {
 		model.addAttribute("recentBooks", recentlyViewed);
-		return "recently-viewed"; // New .html file
+		return "recently-viewed";
 	}
 
 	@RequestMapping("/remove-recently-viewed/{id}")
@@ -136,8 +136,7 @@ public class BookController {
 		String lower = query.toLowerCase();
 
 		for (Book book : recentlyViewed) {
-			if (book.getName().toLowerCase().contains(lower) ||
-					book.getName().toLowerCase().contains(lower)) {
+			if (book.getName().toLowerCase().contains(lower)) {
 				matchedBooks.add(book);
 			}
 		}
