@@ -1,10 +1,13 @@
 package com.knf.dev.librarymanagementsystem.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import javax.servlet.http.HttpSession;
 
 import com.knf.dev.librarymanagementsystem.util.SortingAlgorithms;
 import org.springframework.data.domain.PageRequest;
@@ -113,7 +116,7 @@ public class BookController {
 	public String showRecentlyViewedBooks(@ModelAttribute("recentlyViewed") Stack<Book> recentlyViewed,
 			Model model) {
 		model.addAttribute("recentBooks", recentlyViewed);
-		return "recent-books"; // New .html file
+		return "recently-viewed"; // New .html file
 	}
 
 	@RequestMapping("/remove-recently-viewed/{id}")
@@ -121,6 +124,26 @@ public class BookController {
 			@ModelAttribute("recentlyViewed") Stack<Book> recentlyViewed) {
 		recentlyViewed.removeIf(book -> book.getId().equals(id));
 		return "redirect:/recently-viewed";
+	}
+
+	@GetMapping("/search-recent")
+	public String searchRecentlyViewed(
+			@RequestParam("query") String query,
+			@ModelAttribute("recentlyViewed") Stack<Book> recentlyViewed,
+			Model model) {
+
+		List<Book> matchedBooks = new ArrayList<>();
+		String lower = query.toLowerCase();
+
+		for (Book book : recentlyViewed) {
+			if (book.getName().toLowerCase().contains(lower) ||
+					book.getName().toLowerCase().contains(lower)) {
+				matchedBooks.add(book);
+			}
+		}
+
+		model.addAttribute("recentBooks", matchedBooks);
+		return "recently-viewed";
 	}
 
 	@GetMapping("/add")

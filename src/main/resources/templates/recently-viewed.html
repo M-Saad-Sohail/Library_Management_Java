@@ -18,6 +18,17 @@
       <div th:if="${#lists.isEmpty(recentBooks)}">
         <p>No books viewed yet.</p>
       </div>
+      <!-- Search Form -->
+      <form action="/search-recent" method="get" class="form-inline mb-4">
+        <input
+          type="text"
+          name="query"
+          class="form-control mr-2"
+          placeholder="Search recently viewed..."
+          required
+        />
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
       <div th:if="${!#lists.isEmpty(recentBooks)}">
         <ul class="list-group">
           <li
@@ -41,6 +52,7 @@
           </li>
         </ul>
       </div>
+      <p th:if="${#lists.isEmpty(recentBooks)}">No matching books found.</p>
       <a href="/books" class="btn btn-light mt-3">Back to All Books</a>
     </div>
   </body>
