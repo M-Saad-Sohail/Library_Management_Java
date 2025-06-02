@@ -2,6 +2,7 @@ package com.knf.dev.librarymanagementsystem.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -12,9 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.knf.dev.librarymanagementsystem.entity.Book;
 import com.knf.dev.librarymanagementsystem.service.AuthorService;
@@ -23,6 +26,7 @@ import com.knf.dev.librarymanagementsystem.service.CategoryService;
 import com.knf.dev.librarymanagementsystem.service.PublisherService;
 
 @Controller
+@SessionAttributes("recentlyViewed")
 public class BookController {
 
 	private final BookService bookService;
@@ -82,11 +86,41 @@ public class BookController {
 		return "list-books"; // your Thymeleaf page name
 	}
 
-	@RequestMapping("/book/{id}")
-	public String findBookById(@PathVariable("id") Long id, Model model) {
+	@ModelAttribute("recentlyViewed")
+	public Stack<Book> recentlyViewed() {
+		return new Stack<>();
+	}
 
-		model.addAttribute("book", bookService.findBookById(id));
+	@RequestMapping("/book/{id}")
+	public String findBookById(@PathVariable("id") Long id, Model model,
+			@ModelAttribute("recentlyViewed") Stack<Book> recentlyViewed) {
+		Book book = bookService.findBookById(id);
+		model.addAttribute("book", book);
+
+		// Avoid duplicates
+		recentlyViewed.removeIf(b -> b.getId().equals(book.getId()));
+		recentlyViewed.push(book);
+
+		// Limit to last 5
+		while (recentlyViewed.size() > 5) {
+			recentlyViewed.remove(0);
+		}
+
 		return "list-book";
+	}
+
+	@GetMapping("/recently-viewed")
+	public String showRecentlyViewedBooks(@ModelAttribute("recentlyViewed") Stack<Book> recentlyViewed,
+			Model model) {
+		model.addAttribute("recentBooks", recentlyViewed);
+		return "recent-books"; // New .html file
+	}
+
+	@RequestMapping("/remove-recently-viewed/{id}")
+	public String removeRecentlyViewed(@PathVariable("id") Long id,
+			@ModelAttribute("recentlyViewed") Stack<Book> recentlyViewed) {
+		recentlyViewed.removeIf(book -> book.getId().equals(id));
+		return "redirect:/recently-viewed";
 	}
 
 	@GetMapping("/add")

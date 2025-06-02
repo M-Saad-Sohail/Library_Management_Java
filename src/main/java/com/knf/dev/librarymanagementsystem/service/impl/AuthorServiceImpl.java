@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.knf.dev.librarymanagementsystem.entity.Author;
-import com.knf.dev.librarymanagementsystem.entity.Book;
 import com.knf.dev.librarymanagementsystem.exception.NotFoundException;
 import com.knf.dev.librarymanagementsystem.repository.AuthorRepository;
 import com.knf.dev.librarymanagementsystem.service.AuthorService;

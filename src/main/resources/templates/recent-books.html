@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Recently Viewed Books</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    />
+  </head>
+  <body class="bg-dark text-light">
+    <div class="container mt-5">
+      <h2 class="mb-4">📚 Recently Viewed Books</h2>
+      <div th:if="${#lists.isEmpty(recentBooks)}">
+        <p>No books viewed yet.</p>
+      </div>
+      <div th:if="${!#lists.isEmpty(recentBooks)}">
+        <ul class="list-group">
+          <li
+            class="list-group-item bg-secondary text-light"
+            th:each="book : ${recentBooks}"
+          >
+            <strong th:text="${book.name}"></strong> -
+            <span th:text="${book.serialName}"></span>
+            <a
+              th:href="@{/book/{id}(id=${book.id})}"
+              class="btn btn-sm btn-info float-right"
+              >View Again</a
+            >
+            <a
+              th:href="@{/remove-recently-viewed/{id}(id=${book.id})}"
+              class="btn btn-sm btn-danger float-right"
+              title="Remove from Recently Viewed"
+            >
+              <i class="fas fa-trash-alt"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <a href="/books" class="btn btn-light mt-3">Back to All Books</a>
+    </div>
+  </body>
+</html>
